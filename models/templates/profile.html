@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+<p><strong>Nickname: </strong><i>{{ user.login }}</i></p><br>
+<p>
+    {% if user.vanish %}
+        <a href="/profile/hide" class="profile-vanish-list">Hide</a>
+        <strong> movies watch list </strong>
+    {% else %}
+        <a href="/profile/hide" class="profile-vanish-list">Show</a>
+        <strong> movies watch list </strong>
+    {% endif %}
+</p>
+<div class="profile_parent">
+     <ul class="list_films"><li>
+        <div class="film_indent"><h3>Title</h3></div>
+        <div class="datetime_indent"><h3>Date</h3></div>
+        <div class="film_set_indent"><h3>Group</h3></div>
+        <div class="sets_indent"></div>
+    </li></ul>
+</div>
+<div class="profile_parent">
+    <ul class="list_films">
+        {% for set in sets_plan -%}
+            <li>
+                <div class="film_indent">
+                    <a class="film_page" href="{{ url_for('film', title=set.title,
+                    menu=menu) }}">{{ set.title }}</a>
+                </div>
+                        {% if set.sets == "watch" %}
+                            <div class="datetime_indent"><i>{{ set.adding_time.strftime('%Y-%m-%d') }}</i></div>
+                            <div class="film_set_indent">should {{ set.sets }}</div>
+                        {% else %}
+                            <div class="datetime_indent"><i>{{ set.adding_time.strftime('%Y-%m-%d') }}</i></div>
+                            <div class="film_set_indent">{{ set.sets }}</div>
+                        {% endif %}
+                <div class="sets_indent">
+                    <a href="/profile/{{ set.fk_filmplan_id }}/0/sets" class="btn-watch">Watch</a>
+                    <a href="/profile/{{ set.fk_filmplan_id }}/1/sets" class="btn-watched">Watched</a>
+                    <a href="/profile/{{ set.fk_filmplan_id }}/2/sets" class="btn-dropped">Dropped</a>
+                    <a href="/profile/{{ set.fk_filmplan_id }}/del" class="btn-prof-del"><span class="tooltiptext">Delete</span>Х</a>
+                </div>
+            </li>
+        {% endfor -%}
+    </ul>
+
+</div>
+{% endblock %}

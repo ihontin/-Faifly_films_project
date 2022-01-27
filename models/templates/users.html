@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+<div>
+    <ul class="list_films">
+        {% for one_user in list_of_users -%}
+                <li><div><a href="{{ url_for('users', title=one_user.login, menu=menu, user_id=one_user.id,
+                username=one_user.login) }}">
+                    {{ one_user.login }}</a></div></li>
+        {% endfor %}
+    </ul>
+</div>
+<div>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{msg}}</div>
+    {% endfor %}
+</div>
+{% if user_id -%}
+    <div>
+        <strong> {{username}} films list: </strong>
+        <ul class="list_films">
+                {% for film in user_films_list -%}
+                    <li><div><a class="film_page" href="{{ url_for('film', title=film.title, menu=menu) }}">
+                        {{ film.title }}</a></div></li>
+                {% endfor -%}
+        </ul>
+    </div>
+{% endif %}
+{% endblock %}

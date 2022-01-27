@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{ cat }}">{{msg}}</div>
+{% endfor %}
+<h4>Are you sure you want to exit?</h4>
+<form action="/logout" method="post" class="form-contact">
+    <p><input type="submit" value="Exit" /></p>
+</form>
+{% endblock %}

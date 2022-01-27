@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
+    <h3>Back to <a href="{{ url_for('index') }}">main page</a></h3>
+{% endblock %}

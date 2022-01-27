@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+<div class="parent_film_rate">
+    {% if film_rating %}
+        <div class="film_rate">
+            <i> Rating: {{ film_rating }}</i>
+        </div>
+    {% else %}
+        <div class="film_rate">
+            <i> Rating: 0 </i>
+        </div>
+    {% endif %}
+    {% if cur_user.is_active %}
+    <div class="select_film_rate">
+        <i>RATE IT:
+        {% for i in range(5)%}
+            <a href="/film/{{ i + 1 }}/{{film_select.id}}/{{cur_user.id}}/rating" class="film_rate">{{ i + 1}}</a>
+        {% endfor %}
+            </i>
+    </div>
+    {% endif %}
+</div><br>
+<div>
+    <i class="no_wrap">Genres:
+        {% for genre in genres -%}
+            {{ genre.title }}
+        {% endfor -%}
+    </i>
+</div><br>
+{% if cur_user.is_active %}
+    <p>
+         <a href="/film/{{ film_select.id }}/add" class="btn-film-add">Add</a><strong> to movies watch list</strong>
+    </p>
+{% endif %}
+<br>
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{msg}}</div>
+{% endfor %}
+<h2>From the same denomination:</h2>
+<ul class="list_films">
+    {% for film in film_sets -%}
+    <li><a class="film_page" href="{{ url_for('film', title=film.title, menu=menu) }}">{{ film.title }}</a></li>
+    {% endfor -%}
+</ul><br>
+<h3>Comments:</h3>
+<div class="film_comment_parent">
+    <ul class="comments_del">
+            <li>
+                {% for comm in film_comments -%}
+                    <div class="film_coment">{{ comm.nick }} - {{ comm.my_comment }}
+                        {% if comm.fk_usercom_id == cur_user.id %}
+                            <a href="/film/{{ comm.id }}/del" class="btn-prof-del"><span class="tooltiptext">Delete</span>Х</a>
+                        {% endif %}
+                    </div>
+                {% endfor -%}
+            </li>
+    </ul>
+</div>
+{% if cur_user.is_active %}
+    <form action="/film" method="post" class="form-contact">
+        <p><label><strong>Leave your comment here:</strong></label></p>
+        <p><textarea name="comment" rows=3 cols=40 placeholder="Share your opinion"></textarea></p>
+        <p><input type="submit" value="Add" /></p>
+    </form>
+{% endif %}
+{% endblock %}

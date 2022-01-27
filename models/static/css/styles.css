@@ -1,0 +1,348 @@
+html, body {
+    font-family: 'Arial';
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+a {
+    color: #0059b2;
+    text-decoration: none;
+}
+a:hover {
+    color: #CC0000;
+    text-decoration: underline;
+}
+
+.clear {clear: both;}
+
+ul.mainmenu {
+    list-style: none;
+    background: #3F4137;
+    height: 60px;
+    margin: 0;
+    padding: 0;
+    color: #fdc073;
+    font-size: 20px;
+    overflow: hidden;
+}
+ul.mainmenu li {
+    float: left;
+    margin: 18px 40px 0 20px;
+}
+ul.mainmenu li:last-child {float: right;}
+
+ul.mainmenu li a {
+    color: #fdc073;
+    text-decoration: none;
+}
+
+ul.mainmenu li a:hover {
+    color: #FFAB00;
+}
+
+div.content {
+    margin: 10px;
+}
+
+.form-contact label {
+    display: inline-block;
+    min-width: 80px;
+}
+.form-contact p {margin: 10px 0 10px 0;}
+.form-contact input[type=submit], textarea {
+    font-size: 16px;
+}
+.flash {padding: 10px;}
+.flash.success {
+    border: 1px solid #21DB56;
+    background: #AEFFC5;
+}
+.flash.error {
+    border: 1px solid #FF4343;
+    background: #FF9C9C;
+}
+.flash.new_account {
+    border: 1px solid #FFFF46;
+    background: #FFFF9C;
+}
+ul.list_films li {
+    color: black;
+    padding: 5px 10px;
+    list-style-type: none;
+    margin-top: 5px;
+}
+
+ul.list_films li a {
+    color: black;
+
+}
+.pagination {
+    color: black;
+    font-size: 13px;
+    display: inline-block;
+    border: 1px solid black;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+.pagination:hover {
+    font-size: 13px;
+    color: white;
+    border: 1px solid black;
+    background: #616161;
+}
+.paginated {
+    color: black;
+    font-size: 13px;
+    display: inline-block;
+    border: 1px solid black;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+.paginated {
+    font-size: 13px;
+    color: white;
+    border: 1px solid black;
+    background: #616161;
+}
+.paginated:hover {
+    font-size: 13px;
+    color: white;
+    border: 1px solid black;
+    background: #3F4137;
+}
+
+
+/* Контейнер <div> */
+.dropbtn {
+    min-width: 200px;
+    background-color: #4E4E4E;
+    color: #fdc073;
+    padding: 16px;
+    font-size: 16px;
+    border: 1px solid #fdc073;
+    border-radius: 8px;
+    cursor: pointer;
+
+}
+/* Контейнер <div> - необходимо разместить выпадающий контент */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+/* Выпадающий контент (скрыт по умолчанию) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #D8D8D8;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Ссылки внутри выпадающего */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+/* Изменить цвет выпадающих ссылок при наведении */
+.dropdown-content a:hover {background-color: #f1f1f1}
+/* Показать выпадающее меню при наведении */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+/* Изменить цвет фона кнопки выпадающего списка, когда отображается содержимое выпадающего списка. */
+.dropdown:hover .dropbtn {
+  background-color: #4E4E4E;
+}
+.no_wrap {
+    white-space: nowrap;
+}
+/* index.html */
+.parent_user_page {
+    margin-top: 40px;
+    margin-left: 40px;
+}
+.parent_user_page .user_page a {
+    min-width: 200px;
+    background-color: #4E4E4E;
+    color: #fdc073;
+    padding: 16px;
+    font-size: 16px;
+    border: 1px solid #fdc073;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.parent_user_page .user_page a:hover {
+    min-width: 200px;
+    background-color: #fdc073;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    border: 1px solid black;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+
+
+
+/* film.html add film to list button */
+.btn-film-add {
+    color: white;
+    background-color: #1B9B0D;
+    border: 1px solid #1B9B0D;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+/* film.html add film to list button */
+.btn-film-add:hover {
+    color: white;
+    border: 1px solid #1B9B0D;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+}
+
+/* film.html comments list */
+.film_comment_parent li{
+    list-style-type: none;
+    margin-top: 10px;
+    padding: 0px 0px 0px 6px;
+}
+.film_comment_parent .film_coment {
+        height:30px;
+}
+
+.film_comment_parent .film_coment a {
+    color: black;
+
+}
+
+
+
+
+
+/* profile.html delete button */
+.btn-prof-del {
+    background-color: #B5B5B5;
+    border: 1px solid black;
+    padding: 3px 6px;
+    border-radius: 16px;
+}
+/* profile.html delete button */
+.btn-prof-del .tooltiptext {
+      visibility: hidden;
+      width: 56px;
+      background-color: white;
+      color: #000;
+      text-align: center;
+      padding: 5px 0;
+      margin-top: 15px;
+      margin-left: 5px;
+      border-radius: 6px;
+      border: 1px solid black;
+      position: absolute;
+      z-index: 1;
+}
+/* profile.html delete button */
+.btn-prof-del:hover .tooltiptext {
+  visibility: visible;
+}
+/* profile.html change film set in films list */
+.btn-watched {
+    background-color: #B5B5B5;
+    border: 1px solid black ;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+/* profile.html change film set in films list */
+.btn-watch {
+    background-color: #B5B5B5;
+    border: 1px solid black ;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+/* profile.html change film set in films list */
+.btn-dropped {
+    background-color: #B5B5B5;
+    border: 1px solid black ;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+.profile_parent .datetime_indent {
+    float: left;
+    width: 18%;
+    margin-right: 0%;
+    height: 46px;
+}
+.profile_parent .film_set_indent {
+    float: left;
+    width: 18%;
+    margin-right: 2%;
+    height: 46px;
+}
+.profile_parent .film_indent {
+    float: left;
+    width: 26%;
+    margin-right: 2%;
+    height: 46px;
+}
+.profile_parent .sets_indent {
+    float: left;
+    width: 29%;
+    height: 46px;
+    margin-right: 4%;
+}
+.profile_parent li {
+    list-style-type: none;
+}
+/* profile.html hide & show button */
+.profile-vanish-list {
+    color: white;
+    background-color: #1B9B0D;
+    border: 1px solid #1B9B0D;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+/* profile.html hide & show button */
+.profile-vanish-list:hover {
+    color: white;
+    border: 1px solid #1B9B0D;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+}
+
+
+
+
+
+/* film.html rating */
+.parent_film_rate {
+
+}
+.parent_film_rate .select_film_rate {
+    margin-top: 10px;
+    background: gray;
+    padding: 5px 5px 5px 5px;
+    width: 193px;
+    border-radius: 6px;
+    border: 1px solid black;
+}
+
+.parent_film_rate .select_film_rate a{
+    color: white;
+    padding: 2px 5px 2px 5px;
+    border: 1px solid gray;
+}
+.parent_film_rate .select_film_rate {
+    color: white;
+}
+.parent_film_rate .select_film_rate a:hover{
+    color: red;
+    padding: 2px 5px 2px 5px;
+    background: white;
+    border: 1px solid red ;
+}
+
