@@ -43,7 +43,7 @@ def seeding_db():
             json_film = json.load(film_file)
 
         for row in json_film:
-            fill_film = Film(title=row['title'], sets=row['set'])
+            fill_film = Film(title=row['title'], sets=row['set'], mean_rating=0)
             film_list.append(fill_film)
             db.session.add(fill_film)
 

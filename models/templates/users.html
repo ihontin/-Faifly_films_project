@@ -15,15 +15,25 @@
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{ cat }}">{{msg}}</div>
     {% endfor %}
-</div>
+</div><br>
 {% if user_id -%}
-    <div>
-        <strong> {{username}} films list: </strong>
+    <div class="user_list_of_films">
+        <h3><big> Movies  of user "{{username}}": </big></h3>
         <ul class="list_films">
+            {% for plan_set in plan_sets -%}
+                {% if plan_set == "watch" %}
+                    <li><strong>should {{ plan_set }}:</strong></li>
+                {% else %}
+                    <li><strong>{{ plan_set }}:</strong></li>
+                {% endif %}
                 {% for film in user_films_list -%}
-                    <li><div><a class="film_page" href="{{ url_for('film', title=film.title, menu=menu) }}">
-                        {{ film.title }}</a></div></li>
+                    {% if plan_set == film.sets %}
+                        <li><div><a class="film_page" href="{{ url_for('film', title=film.title, menu=menu) }}">
+                            {{ film.title }}</a></div></li>
+                    {% endif %}
                 {% endfor -%}
+                <br>
+            {% endfor -%}
         </ul>
     </div>
 {% endif %}

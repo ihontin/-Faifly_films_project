@@ -12,6 +12,8 @@
               {% endfor -%}
           </div>
         </div>
+          <a class="film_rating" id="rating_button" href="{{ url_for('index', title='Sort by rating', menu=menu,
+          li_of_films=list_of_films, genres=genres, page=page_num, genre_search=genre_search, sort_by=1) }}">Sort by rating</a>
         <ul class="list_films">
             {% for m in li_of_films.items -%}
             <li><a class="film_page" href="{{ url_for('film', title=m.title, menu=menu) }}">{{ m.title }}</a></li>
@@ -20,11 +22,11 @@
         {% for page_num in li_of_films.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
             {% if page_num %}
                 {% if li_of_films.page == page_num %}
-                    <a class="paginated" href="{{ url_for('index', title=title, menu=menu,
-                     li_of_films=list_of_films, genres=genres, page=page_num, genre_search=genre_search) }}">{{ page_num }}</a>
+                    <a class="paginated" href="{{ url_for('index', title=title, menu=menu, li_of_films=list_of_films,
+                    genres=genres, page=page_num, genre_search=genre_search, sort_by=sort_by) }}">{{ page_num }}</a>
                 {% else %}
-                     <a class="pagination" href="{{ url_for('index', title=title, menu=menu,
-                     li_of_films=list_of_films, genres=genres, page=page_num, genre_search=genre_search) }}">{{ page_num }}</a>
+                     <a class="pagination" href="{{ url_for('index', title=title, menu=menu, li_of_films=list_of_films,
+                      genres=genres, page=page_num, genre_search=genre_search, sort_by=sort_by) }}">{{ page_num }}</a>
                 {% endif %}
             {% else %}
                 ...

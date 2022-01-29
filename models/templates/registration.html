@@ -6,10 +6,40 @@
 <div class="flash {{ cat }}">{{msg}}</div>
 {% endfor %}
 <form action="/registration" method="post" class="form-contact">
-    <p><label>Login: </label> <input type="text" name="username" value="" required /></p>
-    <p><label>Email: </label> <input type="text" name="user_email" value="" required /></p>
-    <p><label>Password: </label> <input type="text" name="password" value="" required /></p>
-    <p><label>Verify password: </label> <input type="text" name="verify_password" value="" required /></p>
+    <p><label for="username">Login: </label>
+        <input type="text" name="username" id="username" pattern="[\x1F-\xBF]*" minlength="5" maxlength="30" value=""
+                                     title="Only latin characters can be used" required /></p>
+    <p><label for="user_email">Email: </label> <input type="email" name="user_email" id="user_email" value=""
+        pattern='[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' maxlength="36" required /></p>
+    <p><label for="show2">Password: </label>
+        <input type="password" pattern=^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{5,}$
+        title="Must contain at least 5 characters, one capital and one lowercase english letters, one digit" value=""
+                                        maxlength="16" name="password" id="show2" required />
+        <button id="show">Show password</button></p>
+    <p><label for="show1">Verify password: </label>
+        <input type="password" name="verify_password" minlength="5" maxlength="16" value="" id="show1" required /></p>
     <p><input type="submit" value="Registration" /></p>
 </form>
+ <script>
+  var input = document.getElementById("show1");
+  var inputOne = document.getElementById("show2");
+  var button = document.getElementById("show");
+  button.onclick = show;
+
+  function show () {
+   if(input.getAttribute('type') == 'password') {
+    input.removeAttribute('type');
+    input.setAttribute('type', 'text');
+    inputOne.removeAttribute('type');
+    inputOne.setAttribute('type', 'text');
+    button.innerHTML='Hide password';
+   } else {
+    input.removeAttribute('type');
+    input.setAttribute('type', 'password');
+    inputOne.removeAttribute('type');
+    inputOne.setAttribute('type', 'password');
+    button.innerHTML='Show password';
+   }
+  }
+ </script>
 {% endblock %}
