@@ -68,17 +68,25 @@ def index():
     """ Main page shows all movies. Pagination - 5 movies in page, user can choose a genre """
     page = request.args.get('page', 1, type=int)
     genre_search = request.args.get('genre_search', None, type=int)
+    sort_by = request.args.get('sort_by', None, type=int)
     title = request.args.get('title', 'Films', type=str)
     film_glob['film'] = title
     if genre_search:
-        list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search).paginate(page=page,
-                                                                                                    per_page=5)
+        if sort_by:
+            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search).\
+                order_by(db.desc(Film.mean_rating)).paginate(page=page, per_page=5)
+        else:
+            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search).\
+                paginate(page=page, per_page=5)
     else:
-        list_of_films = db.session.query(Film).paginate(page=page, per_page=5)
+        if sort_by:
+            list_of_films = db.session.query(Film).order_by(db.desc(Film.mean_rating)).paginate(page=page, per_page=5)
+        else:
+            list_of_films = db.session.query(Film).paginate(page=page, per_page=5)
     genres = db.session.query(Genre).all()
     menu = check_user()
     return render_template('index.html', title=title, menu=menu, li_of_films=list_of_films, genres=genres,
-                           genre_search=genre_search)
+                           genre_search=genre_search, sort_by=sort_by)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -95,7 +103,9 @@ def login():
             if user_pass:
                 login_user(user_log)
                 menu = menu_active
-                flash('User logged', category='success')
+                return redirect(url_for('index', menu=menu))
+            else:
+                flash('Wrong name or password', category='error')
         else:
             flash('Wrong name or password', category='error')
     return render_template('login.html', title='Authorization', menu=menu)
@@ -150,9 +160,9 @@ def registration():
     return render_template('registration.html', title='Registration', menu=menu)
 
 
-@app.route('/film/<int:film_id>/add', methods=["POST", "GET"])
+@app.route('/film/<int:film_id>/<int:set_number>/add', methods=["POST", "GET"])
 @login_required
-def film_add_plan(film_id):
+def film_add_plan(film_id, set_number):
     """ Add or change group of film """
     menu = menu_active
     if current_user.is_anonymous:
@@ -160,18 +170,23 @@ def film_add_plan(film_id):
         return redirect(url_for('login', title='Authorization', menu=menu))
     film_title = db.session.query(Film).filter(Film.id == film_id).first()
     sets = find_film_group(current_user.id, film_id)
+    film_groups_list = ['watch', 'watched', 'dropped']
     if sets:
-        sets.sets = 'watch'
+        if sets.sets == film_groups_list[set_number]:
+            flash(f'Film "{film_title.title}" was added to "{film_groups_list[set_number]}" list on '
+                  f'{sets.adding_time.date()}', category='new_account')
+            return redirect(url_for('film', title=sets.title, menu=menu))
+        sets.sets = film_groups_list[set_number]
         try:
             db.session.commit()
-            flash(f'{film_title.title} added', category='success')
+            flash(f'{film_title.title} added to "{film_groups_list[set_number]}" list', category='success')
             return redirect(url_for('film', title=film_title.title, menu=menu))
         except Exception as ex:
             return f"Adding movie error - {ex}"
     else:
         try:
             fill_plan = Plan(fk_userplan_id=current_user.id, fk_filmplan_id=film_id, title=film_title.title,
-                             sets='watch', adding_time=datetime.now())
+                             sets=film_groups_list[set_number], adding_time=datetime.now())
             db.session.add(fill_plan)
             db.session.commit()
             flash(f'{film_title.title} added', category='success')
@@ -233,6 +248,11 @@ def film():
     find_rating = db.session.query(Rating).filter(Rating.fk_filmrate_id == film_select.id).all()
     if find_rating:
         film_rating = (sum(f_rat.grade for f_rat in find_rating)) // len(find_rating)
+        film_select.mean_rating = film_rating
+        try:
+            db.session.commit()
+        except Exception as ex:
+            return f"Change film mean rating error - {ex}"
     if current_user.is_anonymous:
         menu = menu_anonym
         return render_template('film.html', title=film_glob['film'], menu=menu, genres=genres, cur_user=current_user,
@@ -240,14 +260,14 @@ def film():
                                film_rating=film_rating)
     if request.method == 'POST':
         new_comment = request.form['comment']
-        if len(new_comment) > 2:
-            user_comment = Comment(fk_usercom_id=current_user.id, nick=current_user.login, fk_filmcom_id=film_select.id,
-                                   adding_time=datetime.now(), my_comment=new_comment)
-            try:
-                db.session.add(user_comment)
-                db.session.commit()
-            except Exception as ex:
-                return f"Add new user comment error - {ex}"
+        user_comment = Comment(fk_usercom_id=current_user.id, nick=current_user.login, fk_filmcom_id=film_select.id,
+                               adding_time=datetime.now(), my_comment=new_comment)
+        try:
+            db.session.add(user_comment)
+            db.session.commit()
+            return redirect(url_for('film', title=film_glob['film'], menu=menu))
+        except Exception as ex:
+            return f"Add new user comment error - {ex}"
     return render_template('film.html', title=film_glob['film'], menu=menu, genres=genres, film_sets=film_sets,
                            film_select=film_select, film_comments=film_comments, cur_user=current_user,
                            film_rating=film_rating)
@@ -320,15 +340,21 @@ def users():
     list_of_users = db.session.query(User).all()
     username = request.args.get('username', 'Users', type=str)
     user_log = find_user(username)
+    plan_sets = ['watch', 'watched', 'dropped']
     if user_log:
-        if user_log.vanish:
+        if user_log.vanish or user_log.id == current_user.id:
             user_id = request.args.get('user_id', None, type=int)
         else:
             flash(f'User "{username}" has restricted access to own list', category='error')
     if user_id:
-        user_films_list = user_film_list(user_id)
+        plan_sets = []
+        user_films_list = db.session.query(Plan).filter(Plan.fk_userplan_id == user_id).\
+            order_by(Plan.sets, Plan.title).all()
+        for one_film in user_films_list:
+            if one_film.sets not in plan_sets:
+                plan_sets.append(one_film.sets)
     return render_template('users.html', title='Users', menu=menu, user_id=user_id, username=username,
-                           list_of_users=list_of_users, user_films_list=user_films_list)
+                           list_of_users=list_of_users, user_films_list=user_films_list, plan_sets=plan_sets)
 
 
 @app.errorhandler(404)

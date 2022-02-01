@@ -346,3 +346,6 @@ ul.list_films li a {
     border: 1px solid red ;
 }
 
+.user_list_of_films strong {
+    text-transform: uppercase;
+}
