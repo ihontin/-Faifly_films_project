@@ -3,12 +3,33 @@
 {% block content %}
 {{ super() }}
 {% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{ cat }}">{{msg}}</div>
+    <div class="flash {{ cat }}">{{msg}}</div>
 {% endfor %}
 <form action="/login" method="post" class="form-contact">
-    <p><label>Name: </label> <input type="text" name="username" value="" required /></p>
-    <p><label>Password: </label> <input type="text" name="password" value="" required /></p>
+    <p><label>Name: </label> <input type="text" name="username" title="Unacceptable symbols" pattern="[^а-яА-Я]+"
+                                    minlength="5" maxlength="30" value="" required /></p>
+    <p><label>Password: </label> <input type="password" id="show1" name="password" minlength="3" maxlength="16" value=""
+                                        required /> <button id="show">Show password</button></p>
     <p><input type="submit" value="Enter" /></p>
 </form>
+ <script>
+  var input = document.getElementById("show1");
+  var button = document.getElementById("show");
+  button.onclick = show;
+
+  function show () {
+   if(input.getAttribute('type') == 'password') {
+    input.removeAttribute('type');
+    input.setAttribute('type', 'text');
+    button.innerHTML='Hide password';
+
+   } else {
+    input.removeAttribute('type');
+    input.setAttribute('type', 'password');
+    button.innerHTML='Show password';
+
+   }
+  }
+ </script>
 <h4><a href="{{ url_for('registration') }}">Registration</a></h4>
 {% endblock %}

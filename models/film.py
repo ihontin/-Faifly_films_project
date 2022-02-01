@@ -14,7 +14,9 @@ class Film(db.Model):
     plan = db.relationship("Plan", backref='film', lazy=True)
     comment = db.relationship("Comment", backref='film', lazy=True)
     rating = db.relationship("Rating", backref='film', lazy=True)
+    mean_rating = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, title, sets):
+    def __init__(self, title, sets, mean_rating):
         self.title = title
         self.set = sets
+        self.mean_rating = mean_rating

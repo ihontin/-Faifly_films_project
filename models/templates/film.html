@@ -31,13 +31,19 @@
 </div><br>
 {% if cur_user.is_active %}
     <p>
-         <a href="/film/{{ film_select.id }}/add" class="btn-film-add">Add</a><strong> to movies watch list</strong>
+         <strong>Add to movies <a href="/film/{{ film_select.id }}/0/add" class="btn-film-add">should watch</a> list</strong>
     </p>
+    <p>
+         <strong>Add to movies <a href="/film/{{ film_select.id }}/1/add" class="btn-film-add">watched</a> list</strong>
+    </p>
+    <p>
+         <strong>Add to movies <a href="/film/{{ film_select.id }}/2/add" class="btn-film-add">dropped</a> list</strong>
+    </p>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{ cat }}">{{msg}}</div>
+    {% endfor %}
 {% endif %}
 <br>
-{% for cat, msg in get_flashed_messages(True) %}
-    <div class="flash {{ cat }}">{{msg}}</div>
-{% endfor %}
 <h2>From the same denomination:</h2>
 <ul class="list_films">
     {% for film in film_sets -%}
