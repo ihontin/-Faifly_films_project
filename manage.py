@@ -2,11 +2,12 @@
 
 import json
 
-from models.app import db
+from models.db import db
 from models.user import User
 from models.film import Film
 from models.genre import Genre
 from models.film_genre import Filmgenre
+from models.film_group import FilmGroup
 
 
 def create_db():
@@ -18,6 +19,7 @@ def create_db():
     from models.plan import Plan
     from models.comment import Comment
     from models.rating import Rating
+    from models.film_group import FilmGroup
     db.create_all()
 
 
@@ -28,8 +30,7 @@ def seeding_db():
         genre_list, film_list = [], []
 
         # Fill USER Table
-        # with open("./data/user.json"...  # for running without docker
-        with open("./models/data/user.json", 'r', encoding='utf-8') as user_file:
+        with open("./data/user.json", 'r', encoding='utf-8') as user_file:
             json_user = json.load(user_file)
 
         for row in json_user:
@@ -37,19 +38,25 @@ def seeding_db():
                              password=row['password'], user_mail=row['user_mail'], admin=row['admin'], vanish=1)
             db.session.add(fill_user)
 
+        # Fill Film_group Table
+        with open("./data/films_groups.json", 'r', encoding='utf-8') as group_file:
+            json_film_group = json.load(group_file)
+
+        for row in json_film_group:
+            fill_film_group = FilmGroup(title=row['title'])
+            db.session.add(fill_film_group)
+
         # Fill FILM Table
-        # with open("./data/film.json"...  # for running without docker
-        with open("./models/data/film.json", 'r', encoding='utf-8') as film_file:
+        with open("./data/film.json", 'r', encoding='utf-8') as film_file:
             json_film = json.load(film_file)
 
         for row in json_film:
-            fill_film = Film(title=row['title'], sets=row['set'], mean_rating=0)
+            fill_film = Film(title=row['title'], fk_filmgroup_id=row['set'], mean_rating=0)
             film_list.append(fill_film)
             db.session.add(fill_film)
 
         # Fill GENRE Table
-        # with open("./data/genre.json"...  # for running without docker
-        with open("./models/data/genre.json", 'r', encoding='utf-8') as gen_file:
+        with open("./data/genre.json", 'r', encoding='utf-8') as gen_file:
             json_genre = json.load(gen_file)
 
         for row in json_genre:
