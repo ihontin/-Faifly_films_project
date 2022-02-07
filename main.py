@@ -5,7 +5,8 @@ from flask import render_template, request, flash, url_for, redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, current_user, logout_user, login_required
 
-from models.app import app, db, login_manager
+from app import app, login_manager
+from models.db import db
 from models.user import User
 from models.film import Film
 from models.genre import Genre
@@ -13,6 +14,7 @@ from models.plan import Plan
 from models.comment import Comment
 from models.rating import Rating
 from models.film_genre import Filmgenre
+from models.film_group import FilmGroup
 
 menu_active = [{"name": "Main page", "url": "/"},
                {"name": "Profile", "url": "profile"},
@@ -52,7 +54,7 @@ def check_user():
 
 
 def profile_film_list():
-    """Return all films from Plan model by user.id"""
+    """Return all films from Plan model by current_user.id"""
     return Film.query.join(Film.plan).filter(Plan.fk_userplan_id == current_user.id).order_by(Plan.title).all()
 
 
@@ -73,10 +75,10 @@ def index():
     film_glob['film'] = title
     if genre_search:
         if sort_by:
-            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search).\
+            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search). \
                 order_by(db.desc(Film.mean_rating)).paginate(page=page, per_page=5)
         else:
-            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search).\
+            list_of_films = Film.query.join(Film.fk_genre_id).filter(Genre.id == genre_search). \
                 paginate(page=page, per_page=5)
     else:
         if sort_by:
@@ -185,7 +187,7 @@ def film_add_plan(film_id, set_number):
             return f"Adding movie error - {ex}"
     else:
         try:
-            fill_plan = Plan(fk_userplan_id=current_user.id, fk_filmplan_id=film_id, title=film_title.title,
+            fill_plan = Plan(fk_userplan_id=current_user.id, fk_filmplan_id=film_id,
                              sets=film_groups_list[set_number], adding_time=datetime.now())
             db.session.add(fill_plan)
             db.session.commit()
@@ -236,18 +238,20 @@ def film_rating_add(rating_num, film_id, user_id):
 def film():
     """ 'Film page' show selected movie, and user can add it to watch list, genres, comments,
      films from the same denomination. User can add and delete his comments"""
-    menu, film_rating = menu_active, None
+    menu, film_rating, film_comments = menu_active, None, dict()
     title_film = request.args.get('title', None, type=str)
     if title_film:
         film_glob['film'] = title_film
     film_select = db.session.query(Film).filter(Film.title == film_glob['film']).first()
     genres = Genre.query.join(Genre.fk_filmgen_id).filter(Film.title == film_glob['film']).all()
     # film_sets - find films from the same film group
-    film_sets = db.session.query(Film).filter(Film.set == film_select.set).all()
-    film_comments = db.session.query(Comment).join(Film).filter(Film.id == film_select.id).all()
+    film_sets = db.session.query(Film).filter(Film.fk_filmgroup_id == film_select.fk_filmgroup_id).all()
+    film_comments_list = db.session.query(Comment).join(Film).filter(Film.id == film_select.id).all()
+    for comment in film_comments_list:
+        film_comments[db.session.query(User).filter(User.id == comment.fk_usercom_id).first()] = comment
     find_rating = db.session.query(Rating).filter(Rating.fk_filmrate_id == film_select.id).all()
     if find_rating:
-        film_rating = (sum(f_rat.grade for f_rat in find_rating)) // len(find_rating)
+        film_rating = round((sum(f_rat.grade for f_rat in find_rating)) / len(find_rating), 1)
         film_select.mean_rating = film_rating
         try:
             db.session.commit()
@@ -260,7 +264,7 @@ def film():
                                film_rating=film_rating)
     if request.method == 'POST':
         new_comment = request.form['comment']
-        user_comment = Comment(fk_usercom_id=current_user.id, nick=current_user.login, fk_filmcom_id=film_select.id,
+        user_comment = Comment(fk_usercom_id=current_user.id, fk_filmcom_id=film_select.id,
                                adding_time=datetime.now(), my_comment=new_comment)
         try:
             db.session.add(user_comment)
@@ -336,7 +340,7 @@ def profile():
 def users():
     """logged user can find another user by nickname to watch his films list"""
     menu = check_user()
-    user_films_list, user_id = None, None
+    user_films_list, user_id, user_films_list = None, None, dict()
     list_of_users = db.session.query(User).all()
     username = request.args.get('username', 'Users', type=str)
     user_log = find_user(username)
@@ -348,11 +352,13 @@ def users():
             flash(f'User "{username}" has restricted access to own list', category='error')
     if user_id:
         plan_sets = []
-        user_films_list = db.session.query(Plan).filter(Plan.fk_userplan_id == user_id).\
-            order_by(Plan.sets, Plan.title).all()
-        for one_film in user_films_list:
-            if one_film.sets not in plan_sets:
-                plan_sets.append(one_film.sets)
+        user_films_sets = db.session.query(Plan).filter(Plan.fk_userplan_id == user_id). \
+            order_by(Plan.sets).all()
+        for one_film_set in user_films_sets:
+            user_films_list[
+                db.session.query(Film).filter(Film.id == one_film_set.fk_filmplan_id).first()] = one_film_set
+            if one_film_set.sets not in plan_sets:
+                plan_sets.append(one_film_set.sets)
     return render_template('users.html', title='Users', menu=menu, user_id=user_id, username=username,
                            list_of_users=list_of_users, user_films_list=user_films_list, plan_sets=plan_sets)
 

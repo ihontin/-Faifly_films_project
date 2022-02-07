@@ -26,8 +26,8 @@
                 {% else %}
                     <li><strong>{{ plan_set }}:</strong></li>
                 {% endif %}
-                {% for film in user_films_list -%}
-                    {% if plan_set == film.sets %}
+                {% for film, group in user_films_list.items() -%}
+                    {% if plan_set == group.sets %}
                         <li><div><a class="film_page" href="{{ url_for('film', title=film.title, menu=menu) }}">
                             {{ film.title }}</a></div></li>
                     {% endif %}

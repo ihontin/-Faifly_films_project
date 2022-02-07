@@ -1,6 +1,6 @@
 """Table Rating"""
 
-from models.app import db
+from models.db import db
 
 
 class Rating(db.Model):
