@@ -1,5 +1,5 @@
 """Table Genre"""
-from models.app import db
+from models.db import db
 
 
 class Genre(db.Model):

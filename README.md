@@ -10,7 +10,7 @@ a. Docker UP:
 b. Create and seed database
     1. sudo docker exec -it application_films bash
     2. python3
-    3. from models.manage import create_db, seeding_db
+    3. from manage import create_db, seeding_db
     4. create_db()
     5. seeding_db()
 

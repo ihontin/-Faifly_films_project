@@ -1,7 +1,7 @@
 """Table User"""
 
 from flask_login import UserMixin
-from models.app import db
+from models.db import db
 
 
 class User(UserMixin, db.Model):

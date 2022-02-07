@@ -54,8 +54,8 @@
 <div class="film_comment_parent">
     <ul class="comments_del">
             <li>
-                {% for comm in film_comments -%}
-                    <div class="film_coment">{{ comm.nick }} - {{ comm.my_comment }}
+                {% for user, comm in film_comments.items() -%}
+                    <div class="film_coment">{{ user.login }} - {{ comm.my_comment }}
                         {% if comm.fk_usercom_id == cur_user.id %}
                             <a href="/film/{{ comm.id }}/del" class="btn-prof-del"><span class="tooltiptext">Delete</span>Х</a>
                         {% endif %}
